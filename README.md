@@ -70,8 +70,13 @@ Opening another project, creating a new scene, or restoring the study asks befor
 - `tests/`: unit tests and browser-native UI/layout harnesses.
 - `docs/INSPIRATION.md`: primary-source research and scope decisions.
 - `docs/QA.md`: verification results and limitations.
-- `app.json`: Tool Shed metadata. No hosting or repository publication performed.
+- `app.json`: Tool Shed metadata and published app link.
 
 ## License and attribution
 
 MIT, see [LICENSE](LICENSE). Inspired by [Blender](https://www.blender.org/), with no affiliation, endorsement, borrowed artwork or file compatibility. The combined `.gitignore` includes Windows, macOS, Linux/Unix, editor, build, dependency, secret and testing patterns.
+
+
+## Published app
+
+Open [Kata Formyard](https://intrepion.github.io/kata-app-inspired-by-blender-codex-dot/). The public repository uses GitHub Actions to verify and deploy `dist/` from `main`. See [QA notes](docs/QA.md) for local verification and known limits.
