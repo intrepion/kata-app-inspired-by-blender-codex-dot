@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {primitive,transform,History,exportOBJ,normals,barycentric} from '../src/core.js';
+import {starter,validate,meshes,object,bounds,TYPES} from '../src/model.js';
+test('five primitives contain finite vertices and valid triangle indices',()=>{for(const type of TYPES){let m=primitive(type);assert(m.vertices.length>3);for(const v of m.vertices)assert(v.every(Number.isFinite));for(const f of m.faces){assert.equal(f.length,3);assert(f.every(i=>i>=0&&i<m.vertices.length));}}});
+test('sphere vertex normals face outward',()=>{const m=primitive('sphere');let n=normals(m);assert(n[2].reduce((s,x,i)=>s+x*m.vertices[2][i],0)>.9);});
+test('cylinder normals face outward',()=>{const m=primitive('cylinder'),n=normals(m);assert(n[0][0]>0);});
+test('transform applies scale, rotation, translation',()=>{let p=transform([1,0,0],{scale:[2,2,2],rotation:[0,0,90],position:[1,3,0]});assert(Math.abs(p[0]-1)<1e-9);assert.equal(p[1],5);});
+test('starter project round trips validation',()=>{let d=starter();assert.deepEqual(validate(JSON.parse(JSON.stringify(d))),d);assert.equal(d.objects.length,5);});
+test('validation rejects duplicate ids',()=>{const d=starter();d.objects[1].id=d.objects[0].id;assert.throws(()=>validate(d));});
+test('validation rejects malformed transforms and unsafe colors',()=>{for(const value of [Infinity,NaN,'1',null]){let d=starter();d.objects[0].position[0]=value;assert.throws(()=>validate(d));}let d=starter();d.objects[0].color='red';assert.throws(()=>validate(d));});
+test('validation rejects negative scale and unsupported primitive',()=>{let d=starter();d.objects[0].scale[0]=-1;assert.throws(()=>validate(d));d=starter();d.objects[0].type='teapot';assert.throws(()=>validate(d));});
+test('40-object limit is enforced',()=>{let d=starter();d.objects=Array.from({length:41},()=>object('cube'));assert.throws(()=>validate(d));});
+test('empty scenes are supported',()=>{let d=starter();d.objects=[];assert.equal(validate(d).objects.length,0);assert.equal(bounds(d).size,5);});
+test('OBJ export offsets faces for multiple objects',()=>{let a=object('cube','one'),b=object('cube','two');let d={objects:[a,b]};let obj=exportOBJ(meshes(d));assert.equal(obj.split('\n').filter(s=>s.startsWith('v ')).length,16);assert(obj.includes('f 9 11 10'));});
+test('history preserves snapshots and clears redo on a new edit',()=>{let h=new History(2),d={n:1};h.push(d);d.n=2;assert.deepEqual(h.undo(d),{n:1});assert.deepEqual(h.redo({n:1}),{n:2});h.push(d);assert.equal(h.future.length,0);});
+test('bounded history keeps the latest snapshots',()=>{let h=new History(2);[1,2,3].forEach(n=>h.push(n));assert.equal(h.past.length,2);assert.equal(h.undo(4),3);assert.equal(h.undo(3),2);assert.equal(h.undo(2),null);});
+test('triangle picking computes barycentric coordinates',()=>{assert.deepEqual(barycentric([.25,.25],[0,0],[1,0],[0,1]),[.5,.25,.25]);assert.equal(barycentric([2,2],[0,0],[1,0],[0,1]),null);});
+test('bounds include all transformed visible geometry',()=>{let d={objects:[object('cube','cube',{position:[3,0,0],scale:[2,1,1]})]};assert.deepEqual(bounds(d),{center:[3,0,0],size:4});});

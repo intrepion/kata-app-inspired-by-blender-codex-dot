@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "kind": "app",
+  "title": "Kata Formyard",
+  "repository": "kata-app-inspired-by-blender-codex-dot",
+  "section": "Kata Tool Shed",
+  "category": "3D & Creative",
+  "tagline": "A little space for big ideas.",
+  "description": "A calm primitive-modeling studio with an original sculptural still life, real 3D transforms, and portable meshes.",
+  "entryPoint": "index.html",
+  "status": "local-prototype",
+  "toolShedUrl": "https://intrepion.github.io/tools/",
+  "features": [
+    "Five mesh primitives",
+    "40-object scene collection",
+    "XYZ position, rotation and scale",
+    "Surface colors and visibility",
+    "Orbit, pan, zoom and frame scene",
+    "Solid and wire overlay views",
+    "30-step undo and redo",
+    "Editable JSON project import/export",
+    "Geometry-only OBJ export",
+    "Local browser autosave"
+  ],
+  "screenshots": [
+    "docs/screenshots/desktop.png",
+    "docs/screenshots/narrow.png"
+  ],
+  "inspiration": {
+    "name": "Blender",
+    "url": "https://www.blender.org/features/modeling/"
+  },
+  "license": "MIT"
+}
